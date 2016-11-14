@@ -8,9 +8,12 @@ image: trenpixster/elixir:latest
 # Check out: http://docs.gitlab.com/ce/ci/docker/using_docker_images.html#what-is-service
 services:
   - postgres:latest
-  
+
 variables:
   POSTGRES_DB: business_process_web_portal_dev
+  POSTGRES_HOST: "postgres"
+  POSTGRES_USER: "lab_user"
+  POSTGRES_PASSWORD: ""
 
 test:
   script:
