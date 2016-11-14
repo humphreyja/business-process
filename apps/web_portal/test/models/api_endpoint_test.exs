@@ -3,7 +3,7 @@ defmodule WebPortal.APIEndpointTest do
 
   alias WebPortal.APIEndpoint
 
-  test "url single path param resolving" do
+  test "GET: url single path param resolving" do
     url = "https://www.google.com/{{ user_id }}/profile"
     url_params = %{"user_id"=>"john_doe"}
 
@@ -11,7 +11,7 @@ defmodule WebPortal.APIEndpointTest do
     assert(APIEndpoint.generate_url(url, url_params) == expected)
   end
 
-  test "url multiple path params resolving" do
+  test "GET: url multiple path params resolving" do
     url = "https://www.google.com/{{ user_id }}/profile/{{ type }}"
     url_params = %{"user_id"=>"john_doe", "type" => "email"}
 
@@ -19,7 +19,7 @@ defmodule WebPortal.APIEndpointTest do
     assert(APIEndpoint.generate_url(url, url_params) == expected)
   end
 
-  test "url single param resolving" do
+  test "GET: url single param resolving" do
     url = "https://www.google.com/profile"
     url_params = %{"user_id"=>"john_doe"}
 
@@ -27,11 +27,19 @@ defmodule WebPortal.APIEndpointTest do
     assert(APIEndpoint.generate_url(url, url_params) == expected)
   end
 
-  test "url mixed param resolving" do
+  test "GET: url mixed param resolving" do
     url = "https://www.google.com/{{ user_id }}/profile"
     url_params = %{"user_id"=>"john_doe", "type" => "email"}
 
     expected = "https://www.google.com/john_doe/profile?type=email"
     assert(APIEndpoint.generate_url(url, url_params) == expected)
+  end
+
+  test "POST: url mixed param resolving" do
+    url = "https://www.google.com/{{ user_id }}/profile"
+    url_params = %{"user_id"=>"john_doe", "type" => "email"}
+
+    expected = {"https://www.google.com/john_doe/profile", %{"type" => "email"}}
+    assert(APIEndpoint.generate_url(url, url_params, "POST") == expected)
   end
 end

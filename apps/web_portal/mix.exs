@@ -13,6 +13,8 @@ defmodule WebPortal.Mixfile do
      compilers: [:phoenix, :gettext] ++ Mix.compilers,
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
+     test_coverage: [tool: ExCoveralls],
+     preferred_cli_env: ["coveralls": :test, "coveralls.detail": :test, "coveralls.post": :test, "coveralls.html": :test],
      aliases: aliases(),
      deps: deps()]
   end
@@ -23,7 +25,7 @@ defmodule WebPortal.Mixfile do
   def application do
     [mod: {WebPortal, []},
      applications: [:phoenix, :phoenix_pubsub, :phoenix_html, :cowboy, :logger, :gettext,
-                    :phoenix_ecto, :postgrex]]
+                    :phoenix_ecto, :postgrex, :httpoison]]
   end
 
   # Specifies which paths to compile per environment.
@@ -41,6 +43,8 @@ defmodule WebPortal.Mixfile do
      {:phoenix_html, "~> 2.6"},
      {:phoenix_live_reload, "~> 1.0", only: :dev},
      {:gettext, "~> 0.11"},
+     {:excoveralls, "~> 0.5", only: :test},
+     {:httpoison, "~> 0.10.0"},
      {:cowboy, "~> 1.0"}]
   end
 

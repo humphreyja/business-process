@@ -5,7 +5,8 @@ defmodule WebPortal.APIService do
     field :name, :string
     field :description, :string
     field :url, :string
-    has_many :endpoints, WebPortal.Endpoint
+    field :auth, :boolean
+    has_many :endpoints, WebPortal.APIEndpoint
 
     timestamps()
   end
