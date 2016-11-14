@@ -14,5 +14,5 @@ config :web_portal, WebPortal.Repo,
   adapter: Ecto.Adapters.Postgres,
   database: "business_process_web_portal_dev",
   hostname: System.get_env("POSTGRES_HOST") || "localhost",
-  user: System.get_env("POSTGRES_USER") || nil,
+  username: System.get_env("POSTGRES_USER") || nil,
   pool: Ecto.Adapters.SQL.Sandbox
