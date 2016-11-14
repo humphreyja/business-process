@@ -3,43 +3,50 @@ defmodule WebPortal.APIEndpointTest do
 
   alias WebPortal.APIEndpoint
 
-  test "GET: url single path param resolving" do
+  test "GET url single path param resolving" do
     url = "https://www.google.com/{{ user_id }}/profile"
     url_params = %{"user_id"=>"john_doe"}
 
-    expected = "https://www.google.com/john_doe/profile"
+    expected = {:ok, "https://www.google.com/john_doe/profile"}
     assert(APIEndpoint.generate_url(url, url_params) == expected)
   end
 
-  test "GET: url multiple path params resolving" do
+  test "GET url multiple path params resolving" do
     url = "https://www.google.com/{{ user_id }}/profile/{{ type }}"
     url_params = %{"user_id"=>"john_doe", "type" => "email"}
 
-    expected = "https://www.google.com/john_doe/profile/email"
+    expected = {:ok, "https://www.google.com/john_doe/profile/email"}
     assert(APIEndpoint.generate_url(url, url_params) == expected)
   end
 
-  test "GET: url single param resolving" do
+  test "GET url single param resolving" do
     url = "https://www.google.com/profile"
     url_params = %{"user_id"=>"john_doe"}
 
-    expected = "https://www.google.com/profile?user_id=john_doe"
+    expected = {:ok, "https://www.google.com/profile?user_id=john_doe"}
     assert(APIEndpoint.generate_url(url, url_params) == expected)
   end
 
-  test "GET: url mixed param resolving" do
+  test "GET url mixed param resolving" do
     url = "https://www.google.com/{{ user_id }}/profile"
     url_params = %{"user_id"=>"john_doe", "type" => "email"}
 
-    expected = "https://www.google.com/john_doe/profile?type=email"
+    expected = {:ok, "https://www.google.com/john_doe/profile?type=email"}
     assert(APIEndpoint.generate_url(url, url_params) == expected)
   end
 
-  test "POST: url mixed param resolving" do
+  test "POST url mixed param resolving" do
     url = "https://www.google.com/{{ user_id }}/profile"
     url_params = %{"user_id"=>"john_doe", "type" => "email"}
 
-    expected = {"https://www.google.com/john_doe/profile", %{"type" => "email"}}
+    expected = {:ok, "https://www.google.com/john_doe/profile", %{"type" => "email"}}
     assert(APIEndpoint.generate_url(url, url_params, "POST") == expected)
+  end
+
+  test "missing url param returns error" do
+    url = "https://www.google.com/{{ user_id }}/profile"
+    url_params = %{}
+
+    assert {:error, _msg} = APIEndpoint.generate_url(url, url_params)
   end
 end
