@@ -8,7 +8,7 @@ defmodule Dashboard.Nodes.Computation.Log do
       end
 
       def terminate(%{name: "Log"} = node, request_pid) do
-        Dashboard.Nodes.Computation.Log.terminate(node, request_pid)
+        :ok
       end
     end
   end
@@ -16,10 +16,6 @@ defmodule Dashboard.Nodes.Computation.Log do
   def execute(%{name: "Log"} = node, request_pid, req_variables, variables) do
     Logger.info fetch_default_message(node)
     {:ok, variables}
-  end
-
-  def terminate(%{name: "Log"} = node, request_pid) do
-    :ok
   end
 
   defp fetch_default_message(%{message: message}), do: message

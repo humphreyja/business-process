@@ -1,6 +1,9 @@
 defmodule Dashboard.SampleData.Nodes do
   def data do
     %{
+
+      # http://localhost:4000/endpoint?uuid=tr1&to[number]=7153380283&to[city]=Fargo&to[state]=ND&from[number]=7153333333&from[city]=Fargo&from[state]=north%20dakota
+
       0 => %{ # Triggers are recievers of information, they need to set what data is available in the variable list
         # after the event.  Default is everything with the default names.  Below shows allowing nested variables
         # with the parents being renamed and the caller_ids being custom formatted.
@@ -14,20 +17,18 @@ defmodule Dashboard.SampleData.Nodes do
         default_status: 200,
         method: :post,
         timeout: 10000, # If there is no response sent then send the default response.
-        expose: [
-          to: %{
-            __as__: "recipient",
-            phone_number: "number",
-            caller_id: "<%= city %>, <%= truncate(state) %>"
+        expose: %{
+          recipient: %{
+            phone_number: "{{ to.number }}",
+            caller_id: "{{ to.city }}, {{ abbreviate(to.state, :state) }}"
             # truncated is a large function that searches for possible shortened version of the string
             # This might need some work to optimize it
           },
-          from: %{
-            __as__: "caller",
-            phone_number: "number",
-            caller_id: "<%= city %>, <%= truncate(state) %>"
+          caller: %{
+            phone_number: "{{ from.number }}",
+            caller_id: "{{ from.city }}, {{ abbreviate(from.state) }}"
           }
-        ],
+        },
         next: [2]
       },
       1 => %{
@@ -41,18 +42,18 @@ defmodule Dashboard.SampleData.Nodes do
         default_status: 200,
         method: :post,
         timeout: 10000,
-        expose: [
-          to: %{
-            __as__: "recipient",
-            phone_number: "number",
-            caller_id: "<%= city %>, <%= truncate(state) %>"
+        expose: %{
+          recipient: %{
+            phone_number: "{{ to.number }}",
+            caller_id: "{{ to.city }}, {{ abbreviate(to.state) }}"
+            # truncated is a large function that searches for possible shortened version of the string
+            # This might need some work to optimize it
           },
-          from: %{
-            __as__: "caller",
-            phone_number: "number",
-            caller_id: "<%= city %>, <%= truncate(state) %>"
+          caller: %{
+            phone_number: "{{ from.number }}",
+            caller_id: "{{ to.city }}, {{ abbreviate(to.state) }}"
           }
-        ],
+        },
         next: [] # Doesn't need to go to a new node, it will just respond with the default after the timeout.
       },
       2 => %{ # A condition takes a left and right side as well as the comparison operator.  This might be expanded to handle larger or

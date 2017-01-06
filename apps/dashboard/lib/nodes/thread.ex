@@ -26,7 +26,16 @@ defmodule Dashboard.Nodes.Thread do
     execute_nodes_by_id(nodeIds, request_pid, req_vars, vars)
   end
 
-  defp execute_nodes_by_id([], _, _, _), do: :ok
+  # Run only true ids right now
+  def next(%{next_true: trueNodeIds, next_false: falseNodeIds}, request_pid, req_vars, vars) do
+    execute_nodes_by_id(trueNodeIds, request_pid, req_vars, vars)
+  end
+
+  defp execute_nodes_by_id([], _, req_vars, vars) do
+    IO.puts "Finished with: #{inspect vars}"
+    IO.puts "And Request: #{inspect req_vars}"
+    :ok
+  end
   defp execute_nodes_by_id([id | ids], request_pid, req_vars, vars) do
     spawn(fn ->
       Catch.execute(Map.get(Dashboard.SampleData.Nodes.data, id), request_pid, req_vars, vars)
