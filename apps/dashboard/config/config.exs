@@ -32,7 +32,7 @@ use Mix.Config
 
 config :dashboard,
   ecto_repos: [Dashboard.Repos.Mongodb],
-  port: 4000
+  port: 3000
 
 config :dashboard, Dashboard.Repos.Mongodb,
   adapter: Mongo.Ecto,

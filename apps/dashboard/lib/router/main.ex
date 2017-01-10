@@ -5,6 +5,7 @@ defmodule Dashboard.Router.Main do
   plug Plug.Logger
   plug :match
   plug :dispatch
+  plug Plug.Parsers, parsers: [:urlencoded]
 
   get "/" do
 

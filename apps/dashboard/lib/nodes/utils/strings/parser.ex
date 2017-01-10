@@ -1,9 +1,15 @@
 defmodule Dashboard.Nodes.Utils.Strings.Parser do
-
+  @moduledoc """
+  Taks a string with curly brace based code blocks and resolves the blocks based
+  on a map of variables provided and from a series of functions provided by the
+  Utils.Strings.Functions module
+  """
   @r_function_call ~r/^([a-z]*)\((.*?)\)$/i
   @r_variable ~r/^[a-z0-9_]{1,}(?:\.[a-z0-9_]{1,})*$/i
+  @r_list ~r/^\[(.*?)\](?:,?)\s*(.*)$/i #~r/^\[(.*?)\]$/i
   @r_arg_list ~r/,\s*/
   @r_symbol_match ~r/\:[a-z][a-z0-9_]*/
+  @r_string_match ~r/^\"(.*)\"$/
 
   @r_group_content_match ~r/\{\{\s*.*?\s*\}\}/
   @r_group_match ~r/(\{\{\s*|\s*\}\})/
@@ -15,6 +21,7 @@ defmodule Dashboard.Nodes.Utils.Strings.Parser do
   iex> Dashboard.Nodes.Utils.Strings.Parser.execute_string("Hello {{ name }}, my name is {{ computer.name }}.  I am from {{ computer.city }}, {{ abbreviate(computer.state) }}.", %{"name" => "Joe", "computer" => %{"name" => "Siri", "city" => "Fargo", "state" => "North Dakota"}})
   "Hello Joe, my name is Siri.  I am from Fargo, ND."
   """
+  @spec execute_string(String.t, Map.t) :: String.t | {:error, String.t}
   def execute_string(string, %{} = variables) when is_binary(string) do
     case parse_string(string) do
       [] -> string
@@ -41,7 +48,7 @@ defmodule Dashboard.Nodes.Utils.Strings.Parser do
   defp execute_code(code, variables) do
     case execute_code_segment([code], variables) do
       {:error, _msg} = err -> err
-      {:ok, value} -> {:ok, Enum.join(value, " ")}
+      {:ok, value} -> {:ok, List.first(value)}
     end
   end
 
@@ -53,13 +60,23 @@ defmodule Dashboard.Nodes.Utils.Strings.Parser do
       Regex.match?(@r_function_call, code) -> execute_code_segment_function(code, variables)
 
       # Match Variables
-      Regex.match?(@r_variable, code) -> execute_code_segment_variable(String.split(code, "."), variables)
+      Regex.match?(@r_variable, code) ->
+        execute_code_segment_variable(String.split(code, "."), variables)
 
       # Match arg lists
-      Regex.match?(@r_arg_list, code) -> execute_code_segment(String.split(code, @r_arg_list), variables)
+      Regex.match?(@r_list, code) -> execute_code_segment_list(code, variables)
+
+      # Match arg lists
+      Regex.match?(@r_arg_list, code) ->
+        execute_code_segment(String.split(code, @r_arg_list), variables)
 
       # Match symbols
-      Regex.match?(@r_symbol_match, code) -> execute_code_segment_symbol(code)
+      Regex.match?(@r_symbol_match, code) ->
+        execute_code_segment_symbol(code)
+
+      # Match symbols
+      Regex.match?(@r_string_match, code) ->
+        execute_code_segment_string(code)
 
       true -> {:error, "Invalid code: #{inspect code}"}
     end
@@ -89,8 +106,19 @@ defmodule Dashboard.Nodes.Utils.Strings.Parser do
     do: {:ok, resolved_function}
   end
 
+  defp execute_code_segment_list(segment, variables) do
+    with [_m, list_items, extra] <- Regex.scan(@r_list, segment) |> List.flatten,
+         {:ok, resolved_list} <- execute_code_segment([list_items], variables),
+         {:ok, resolved_extra} <- execute_code_segment([extra], variables),
+         final <- "[#{Enum.join(resolved_list, ", ")}]",
+    do: {:ok, [final] ++ resolved_extra}
+  end
+
   # Resolves a "symbol" to a string version of it (for garbage collection issues)
   defp execute_code_segment_symbol(segment), do: {:ok, String.trim(segment)}
+
+  # Resolves a "string"
+  defp execute_code_segment_string(segment), do: {:ok, String.trim(segment)}
 
   # Fetches the variable from a nested structure or returns an error
   defp execute_code_segment_variable([], variable), do: {:ok, variable}

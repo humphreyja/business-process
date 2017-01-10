@@ -1,23 +1,25 @@
 defmodule Dashboard.Nodes.Triggers.Base do
   @default_body "OK"
   @default_status 200
+  @default_content_type "text/plain"
   @default_timeout 0
 
-  def execute(node, request_pid, req_variables, variables) do
-    set_response(node, request_pid)
+  def execute(%{next: next} = node, parent_pid, req_variables, variables) do
+    set_response(node, parent_pid)
     case compute(node, req_variables, variables) do
       {:ok, variables} ->
-        {:ok, variables}
+        IO.puts "DONE: Vars: #{inspect variables}"
+        {:ok, variables, next}
       {:error, msg} -> {:error, msg}
     end
   end
 
-  def terminate(node, request_pid) do
-    send(request_pid, {:default, fetch_default_status(node), fetch_default_body(node), 0})
+  def terminate(node, parent_pid) do
+    send(parent_pid, {:default, fetch_default_status(node), fetch_default_body(node), fetch_default_content_type(node), 0})
   end
 
-  defp set_response(node, request_pid) do
-    send(request_pid, {:default, fetch_default_status(node), fetch_default_body(node), fetch_timeout(node)})
+  defp set_response(node, parent_pid) do
+    send(parent_pid, {:default, fetch_default_status(node), fetch_default_body(node), fetch_default_content_type(node), fetch_timeout(node)})
   end
 
   defp compute(%{expose: expose}, req_variables, variables) do
@@ -49,6 +51,9 @@ defmodule Dashboard.Nodes.Triggers.Base do
 
   defp fetch_default_status(%{default_status: status}), do: status
   defp fetch_default_status(%{}), do: @default_status
+
+  defp fetch_default_content_type(%{default_content_type: content_type}), do: content_type
+  defp fetch_default_content_type(%{}), do: @default_content_type
 
   defp fetch_timeout(%{timeout: timeout}), do: timeout
   defp fetch_timeout(%{}), do: @default_timeout

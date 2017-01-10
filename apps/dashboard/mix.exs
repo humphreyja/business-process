@@ -18,7 +18,7 @@ defmodule Dashboard.Mixfile do
   #
   # Type "mix help compile.app" for more information
   def application do
-    [applications: [:logger, :cowboy, :plug, :mongodb_ecto, :ecto],
+    [applications: [:logger, :cowboy, :plug, :mongodb_ecto, :ecto, :httpoison],
      mod: {Dashboard, []}]
   end
 
@@ -40,7 +40,9 @@ defmodule Dashboard.Mixfile do
       {:cowboy, "~> 1.0.3"},
       {:plug, "~> 1.0"},
       {:mongodb, "== 0.1.0"},
-      {:mongodb_ecto, "~> 0.1"}
+      {:mongodb_ecto, "~> 0.1"},
+      {:httpoison, "~> 0.10.0"},
+      {:poison, "~> 2.0"}
     ]
   end
 end

@@ -3,19 +3,19 @@ defmodule Dashboard.Nodes.Computation.Log do
 
   defmacro __using__(_) do
     quote do
-      def execute(%{name: "Log"} = node, request_pid, req_variables, variables) do
-        Dashboard.Nodes.Computation.Log.execute(node, request_pid, req_variables, variables)
+      def execute(%{name: "Log"} = node, parent_pid, req_variables, variables) do
+        Dashboard.Nodes.Computation.Log.execute(node, parent_pid, req_variables, variables)
       end
 
-      def terminate(%{name: "Log"} = node, request_pid) do
+      def terminate(%{name: "Log"} = node, parent_pid) do
         :ok
       end
     end
   end
 
-  def execute(%{name: "Log"} = node, request_pid, req_variables, variables) do
+  def execute(%{name: "Log", next: next} = node, parent_pid, req_variables, variables) do
     Logger.info fetch_default_message(node)
-    {:ok, variables}
+    {:ok, variables, next}
   end
 
   defp fetch_default_message(%{message: message}), do: message

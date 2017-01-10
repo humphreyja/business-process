@@ -1,0 +1,40 @@
+<div class="main">
+  <nav class="secondary">
+    <div class="action">
+      +
+    </div>
+    <div class="current">
+      Sheet 1
+    </div>
+  </nav>
+  <div class="popup">
+    <div class="frost">
+      <h4>Help</h4>
+      <p>
+        Lorem ipsum dolor sit amet, consectetur
+        adipisicing elit, sed do eiusmod tempor
+        incididunt ut labore et dolore magna aliqua.
+      </p>
+    </div>
+  </div>
+  <div class="editor">
+    <canvas id="editor" width="3000px" height="2600px"></canvas>
+  </div>
+</div>
+<aside class="">
+  <nav class="primary">
+    <div class="current">
+      Blocks
+    </div>
+    <div>
+      Document
+    </div>
+  </nav>
+  <p>Some content</p>
+  <div class="info">
+    <div class="hint">?</div>
+    <div class="popup">
+      <p>Just some info</p>
+    </div>
+  </div>
+</aside>

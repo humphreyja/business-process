@@ -1,0 +1,57 @@
+<div class="header">
+  <div class="left">
+    <span>+</span>
+    <span>-</span>
+  </div>
+  <div class="middle">
+    <span for="toggle-quick" class="action large">
+      <input type="text" placeholder="Search">
+      <div class="quick">
+        <div class="q-heading">
+
+        </div>
+        <div class="q-results">
+
+        </div>
+      </div>
+    </span>
+  </div>
+
+  <div class="right">
+    <span>
+      jake@codelation.com
+    </span>
+  </div>
+</div>
+<div class="main">
+  <aside class="">
+    <nav>
+      <span class="current">Arrange</span>
+      <span>Account</span>
+      <span>Conditions</span>
+    </nav>
+    <div class="main-side">
+      Blah blah
+    </div>
+    <div class="block-chooser">
+      <input type="text" placeholder="Search">
+      <div class="blocks">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+  </aside>
+  <div class="editor">
+    <canvas id="editor" width="3000px" height="2600px"></canvas>
+  </div>
+</div>

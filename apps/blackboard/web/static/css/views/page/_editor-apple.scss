@@ -1,0 +1,119 @@
+.blackboard--page.editor {
+  @include display(flex);
+  @include flex-flow(column);
+  height: 100%;
+
+  main {
+    @include display(flex);
+    @include flex(1);
+    @include flex-flow(row);
+  }
+
+  aside {
+    @include flex(1);
+    border-left: 1px solid #a3a3a3;
+
+    width: 250px;
+  }
+
+  nav {
+    @include display(flex);
+    @include flex(1);
+    min-height: 35px;
+    max-height: 35px;
+    background: rgb(244, 244, 244);
+    border-bottom: 1px solid #aaaaaa;
+    color: #565656;
+
+    & > div {
+
+      display: flex;
+      font-size: 14px;
+      align-items: center;
+      max-width: 300px;
+      justify-content: center;
+      border-right: 1px solid #aaa;
+      font-weight: 100;
+
+      flex: 4;
+
+      &.action {
+        flex: 1;
+        align-items: baseline;
+        font-size: 30px;
+        line-height: 30px;
+        max-width: 60px;
+      }
+    }
+
+    &.primary {
+      .current {
+        background: #3e9bff;
+        color: $white;
+      }
+    }
+
+    &.secondary {
+      .current {
+        background: rgba(155, 209, 255, 0.47);
+        color: rgb(88, 140, 243);
+      }
+    }
+  }
+
+  .main {
+    @include flex(3);
+    @include display(flex);
+    @include flex-flow(column);
+  }
+
+  .editor {
+    @include flex(3);
+    background: #b4c2d1;
+    overflow: scroll;
+
+    canvas {
+      height: 101%;
+      width: 101%;
+    }
+  }
+
+  .popup {
+    position: absolute;
+    z-index: 1;
+    max-width: 200px;
+    margin: 10px;
+
+    & > div {
+      padding: 10px;
+      border-radius: 5px;
+      box-shadow: 1px 1px 7px $grey;
+      border: 1px solid rgba(198, 198, 198, 0.77);
+    }
+  }
+
+  .frost {
+    overflow: hidden;
+    background-color: rgba(227, 227, 227, 0.66);
+    position: relative;
+    min-height: 100px;
+    min-width: 100px;
+    color: #333;
+
+    &::before {
+      background: url("/images/blur.jpg") no-repeat 80%;
+      background-size: cover;
+      transform: scale(2);
+      content: "";
+      filter: blur(10px);
+      position: absolute;
+      display: block;
+      top: 0;
+      bottom: 0;
+      right: 0;
+      left: 0;
+      z-index: -1;
+      opacity: 0.7;
+    }
+  }
+}

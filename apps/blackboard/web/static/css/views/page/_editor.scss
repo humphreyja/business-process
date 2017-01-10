@@ -1,0 +1,231 @@
+::-webkit-input-placeholder {
+  color: #666;
+}
+
+::-moz-placeholder {
+  color: #666;
+}
+
+::-ms-input-placeholder {
+  color: #666;
+}
+
+.blackboard--page.editor {
+  @include display(flex);
+  @include flex-flow(column);
+  height: 100%;
+
+  font-weight: 100;
+  font-size: 12px;
+
+  main {
+    @include display(flex);
+    @include flex(1);
+    @include flex-flow(column);
+  }
+
+  .header {
+    @include display(flex);
+    @include flex(1);
+    @include flex-flow(row);
+    @include justify-content(space-between);
+
+    @include background-image(linear-gradient(to top, #303030 52.94%, #424242));
+
+    min-height: 35px;
+    max-height: 35px;
+
+    & > div {
+      @include display(flex);
+      @include flex(1);
+      @include flex-flow(row);
+      @include align-items(center);
+
+      &.right {
+        @include justify-content(flex-end);
+      }
+      &.middle {
+        @include justify-content(center);
+        position: relative;
+
+        .action {
+          padding: 0;
+
+          input {
+            height: 100%;
+            width: 100%;
+            padding: 2px 6px;
+            border: 0;
+            background: transparent;
+            color: #333;
+            text-align: center;
+            cursor: default;
+
+            &:focus {
+              text-align: left;
+              cursor: text;
+              @include background-image(linear-gradient(to top, #f2f2f2 60.5%, #fff));
+            }
+
+            &:focus ~ .quick {
+              @include transition(height 0.2s ease-in-out);
+              height: 300px;
+            }
+          }
+        }
+      }
+      &.left {
+        @include justify-content(flex-start);
+      }
+
+      span,
+      .action {
+        @include background-image(linear-gradient(to top, #cfcfcf 1.68%, #dddddd 65.55%, #e0e0e0));
+        padding: 2px 6px;
+        border-radius: 3px;
+        border: 1px solid #dcdcdc;
+        margin: 0 5px;
+        color: #333;
+        min-width: 25px;
+        text-align: center;
+        box-shadow: 1px 1px 2px #232323;
+        cursor: default;
+
+        &.large {
+          @include flex(1);
+        }
+
+        &:hover {
+          box-shadow: 0 0 6px #000;
+        }
+        &:active {
+          box-shadow: 0 0 6px #000;
+          @include background-image(linear-gradient(to top, #bfbfbf 1.68%, #b8b8b8 65.55%, #cccccc));
+          border-color: #bbb;
+        }
+      }
+
+      .hidden {
+        display: none;
+
+      }
+
+      .quick {
+        position: absolute;
+        top: 35px;
+        right: 0;
+        left: 0;
+        background: linear-gradient(to top, #282828 43.7%, rgb(38, 38, 38) 78.99%, #303030);
+        height: 0px;
+        border-radius: 3px;
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+        box-shadow: 0px 7px 9px rgba(51, 51, 51, 0.51);
+        @include transition(height 0.2s ease-in-out);
+
+        &:hover {
+          @include transition(height 0.2s ease-in-out);
+          height: 300px;
+        }
+      }
+    }
+  }
+
+  .main {
+    @include display(flex);
+    @include flex(10);
+    @include flex-flow(row);
+    aside {
+      @include display(flex);
+      @include flex-flow(column);
+      @include flex(1);
+
+      min-width: 250px;
+      max-width: 250px;
+      border-right: 1px solid #939393;
+
+      .main-side {
+        @include flex(1);
+      }
+
+      .block-chooser {
+        @include display(flex);
+        @include flex-flow(row);
+        @include flex-wrap(wrap);
+        @include justify-content(center);
+
+        border-top: 1px solid #bbb;
+
+        input {
+          width: 100%;
+          background: #d8d8d8;
+          border-radius: 5px;
+          border: 0;
+          padding: 2px 5px;
+          margin: 5px;
+          text-align: center;
+          cursor: default;
+
+          &:focus {
+            text-align: left;
+            cursor: text;
+            background: #fafafa;
+          }
+        }
+
+
+        .blocks {
+          @include display(flex);
+          @include flex-flow(row);
+          @include flex-wrap(wrap);
+          @include justify-content(center);
+          overflow: scroll;
+          min-height: 150px;
+          max-height: 200px;
+          border-top: 1px solid #bbb;
+          padding: 5px;
+        }
+
+        span {
+          display: block;
+          height: 60px;
+          width: 60px;
+          border: 2px solid #333;
+          border-radius: 3px;
+          margin: 5px;
+        }
+      }
+
+      nav {
+        @include display(flex);
+
+        span {
+          @include flex(1);
+          border-right: 1px solid #ababab;
+          line-height: 30px;
+          text-align: center;
+          border-bottom: 1px solid #ababab;
+
+          &:last-child {
+            border-right: 0;
+          }
+
+          &:not(.current) {
+            background: #c6c6c6;
+            color: #5c5c5c;
+          }
+        }
+      }
+    }
+
+    .editor {
+      @include flex(4);
+      overflow: scroll;
+
+      canvas {
+        height: 101%;
+        width: 101%;
+      }
+    }
+  }
+}

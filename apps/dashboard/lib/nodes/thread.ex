@@ -3,6 +3,7 @@ defmodule Dashboard.Nodes.Thread do
   alias Plug.Conn
 
   def start_thread(%Conn{} = conn) do
+    IO.puts "Starting"
     spawn(fn -> execute_connection(conn.params, conn) end)
   end
 
@@ -16,19 +17,17 @@ defmodule Dashboard.Nodes.Thread do
   defp execute_connection(%{}, conn), do: send conn.owner, :none
 
   defp request_variables(conn) do
-    conn.params
+    Map.merge(conn.body_params, conn.params)
   end
 
-  def next(%{next: []} = node, request_pid, req_vars, vars) do
-    Catch.terminate(node, request_pid, req_vars, vars)
-  end
-  def next(%{next: nodeIds}, request_pid, req_vars, vars) do
-    execute_nodes_by_id(nodeIds, request_pid, req_vars, vars)
-  end
+  def next(node, parent_pid, req_vars, vars, []) do
+    IO.puts "Finished with: #{inspect vars}"
+    IO.puts "And Request: #{inspect req_vars}"
 
-  # Run only true ids right now
-  def next(%{next_true: trueNodeIds, next_false: falseNodeIds}, request_pid, req_vars, vars) do
-    execute_nodes_by_id(trueNodeIds, request_pid, req_vars, vars)
+    Catch.terminate(node, parent_pid, req_vars, vars)
+  end
+  def next(_node, parent_pid, req_vars, vars, next) do
+    execute_nodes_by_id(next, parent_pid, req_vars, vars)
   end
 
   defp execute_nodes_by_id([], _, req_vars, vars) do
@@ -36,10 +35,23 @@ defmodule Dashboard.Nodes.Thread do
     IO.puts "And Request: #{inspect req_vars}"
     :ok
   end
-  defp execute_nodes_by_id([id | ids], request_pid, req_vars, vars) do
+  defp execute_nodes_by_id([id | ids], parent_pid, req_vars, vars) do
+    IO.puts "Spawning node: #{inspect Map.get(Dashboard.SampleData.Nodes.data, id)}"
+
     spawn(fn ->
-      Catch.execute(Map.get(Dashboard.SampleData.Nodes.data, id), request_pid, req_vars, vars)
+      Catch.execute(Map.get(Dashboard.SampleData.Nodes.data, id), parent_pid, req_vars, vars)
     end)
-    execute_nodes_by_id(ids, request_pid, req_vars, vars)
+    execute_nodes_by_id(ids, parent_pid, req_vars, vars)
+  end
+
+
+  # Keep nodes alive for a time period to accept responses from their children.
+  # Expose an api to the base.ex modules that can capture responses.
+  defp rec_response(timeout) do
+    receive do
+      :ok -> :ok
+    after
+      timeout -> :ok
+    end
   end
 end

@@ -13,23 +13,28 @@ defmodule Dashboard.SampleData.Nodes do
       	type: "Trigger",
       	name: "Twilio::Calls.recieve",
         authentication_id: 0,
-        default_body: "<twiml send-to-vm></twiml>",
+        default_body: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<Response>
+    <Say voice=\"woman\">Please leave a message after the tone.</Say>
+    <Record/>
+</Response>",
         default_status: 200,
+        default_content_type: "text/xml",
         method: :post,
         timeout: 10000, # If there is no response sent then send the default response.
         expose: %{
-          recipient: %{
-            phone_number: "{{ to.number }}",
-            caller_id: "{{ to.city }}, {{ abbreviate(to.state, :state) }}"
+          "recipient" => %{
+            "phone_number" => "{{ To }}",
+            "caller_id" => "{{ titleize(ToCity) }}, {{ abbreviate(ToState, :state) }}"
             # truncated is a large function that searches for possible shortened version of the string
             # This might need some work to optimize it
           },
-          caller: %{
-            phone_number: "{{ from.number }}",
-            caller_id: "{{ from.city }}, {{ abbreviate(from.state) }}"
+          "caller" => %{
+            "phone_number" => "{{ From }}",
+            "caller_id" => "{{ titleize(FromCity) }}, {{ abbreviate(FromState, :state) }}"
           }
         },
-        next: [2]
+        next: [3]
       },
       1 => %{
       	id: 1,
@@ -43,15 +48,15 @@ defmodule Dashboard.SampleData.Nodes do
         method: :post,
         timeout: 10000,
         expose: %{
-          recipient: %{
-            phone_number: "{{ to.number }}",
-            caller_id: "{{ to.city }}, {{ abbreviate(to.state) }}"
+          "recipient" => %{
+            "phone_number" => "{{ to.number }}",
+            "caller_id" => "{{ join([titleize(ToCity), abbreviate(ToState, :state) ], \",\") }}"
             # truncated is a large function that searches for possible shortened version of the string
             # This might need some work to optimize it
           },
-          caller: %{
-            phone_number: "{{ from.number }}",
-            caller_id: "{{ to.city }}, {{ abbreviate(to.state) }}"
+          "caller" => %{
+            "phone_number" => "{{ from.number }}",
+            "caller_id" => "{{ join([titleize(FromCity), abbreviate(FromState, :state) ], \",\") }}"
           }
         },
         next: [] # Doesn't need to go to a new node, it will just respond with the default after the timeout.
@@ -65,20 +70,10 @@ defmodule Dashboard.SampleData.Nodes do
   	    id: 2,
         page: 0,
         type: "Condition",
-        variable: "my_number?",
-        default_false: :halt,
-        lhs: %{
-          type: "var",
-          value: "twilio-0.to.number",
-        },
-        rhs: %{
-  		    type: "static",
-  		    value: "7153380283",
-  	    },
-  	    cond: %{
-  		    compare: "eq",
-  		    serialize: "phone_number",
-  	    },
+        lhs: "7153380283",
+        rhs: "[{{ misc }}]",
+  	    operator: "in",
+        serializer: "phone_number",
         next_true: [3],
         next_false: []
       },
@@ -89,10 +84,11 @@ defmodule Dashboard.SampleData.Nodes do
        	type: "Action",
        	name: "Slack::Channel.post",
         method: :post,
+        url: "https://hooks.slack.com/services/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",
+        content_type: "application/json",
         authentication_id: 2,
-        action: %{
-          channel: "general",
-          contents: "New call from <%= twilio-0.from.caller_id %> - <%= string_to_phone_number(twilio-0.from.number, \"(###) ###-####\") %>"
+        data: %{
+          text: "New call from {{ caller.caller_id }} - {{ format(caller.phone_number, \"+# (###) ###-####\", :phone_number) }}"
         },
         next: []
       },
