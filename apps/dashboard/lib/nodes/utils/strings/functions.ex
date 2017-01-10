@@ -46,11 +46,12 @@ defmodule Dashboard.Nodes.Utils.Strings.Functions do
   end
 
   def execute_function("join", [list, char]) when is_list(list) do
-    {:ok, Enum.join(list, char)}
+    cleaned_list = Enum.filter(list, fn i ->  i != "" && i != nil end)
+    {:ok, Enum.join(cleaned_list, char)}
   end
 
   def execute_function("titleize", [string]) when is_binary(string) do
-    {:ok, String.capitalize(string)}
+    {:ok, String.split(string, " ") |> Enum.map(&String.capitalize(&1)) |> Enum.join(" ")}
   end
 
   @doc """
