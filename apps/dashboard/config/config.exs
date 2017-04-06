@@ -31,12 +31,11 @@ use Mix.Config
 
 
 config :dashboard,
-  ecto_repos: [Dashboard.Repos.Mongodb],
+  ecto_repos: [Dashboard.Data.Main.Repo],
   port: 3000
 
-config :dashboard, Dashboard.Repos.Mongodb,
-  adapter: Mongo.Ecto,
-  database: "business_process_dashboard",
-  hostname: "localhost",
-  port: 27017,
-  pool_size: 10
+config :dashboard, Dashboard.Data.Main.Repo,
+adapter: Ecto.Adapters.Postgres,
+database: "buiness_process_main",
+hostname: "localhost",
+port: "5432"

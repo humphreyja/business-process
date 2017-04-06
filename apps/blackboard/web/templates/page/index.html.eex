@@ -1,1 +1,4 @@
 
+<%= link "Sign Out", to: user_sessions_path(@conn, :delete), method: :delete %>
+<%= link "Editor", to: "/editor" %>
+<%= inspect @conn.assigns %>

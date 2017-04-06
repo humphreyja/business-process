@@ -7,6 +7,11 @@ defmodule Blackboard.Router do
     plug :fetch_flash
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug Blackboard.Plugs.SetUser
+  end
+
+  pipeline :authorize do
+    plug Blackboard.Plugs.Authorize
   end
 
   pipeline :api do
@@ -18,6 +23,14 @@ defmodule Blackboard.Router do
 
     get "/", PageController, :index
     get "/settings", PageController, :settings
+    get "/authorize/new", UserSessionsController, :new
+    delete "/authorize/delete", UserSessionsController, :delete
+    get "/authorize/delete", UserSessionsController, :delete
+  end
+
+  scope "/", Blackboard do
+    pipe_through :browser
+    pipe_through :authorize
     get "/editor", PageController, :editor
   end
 

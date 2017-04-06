@@ -17,8 +17,8 @@
       </p>
     </div>
   </div>
-  <div class="editor">
-    <canvas id="editor" width="3000px" height="2600px"></canvas>
+  <div id="editor">
+    
   </div>
 </div>
 <aside class="">

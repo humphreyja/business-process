@@ -51,7 +51,6 @@
       </div>
     </div>
   </aside>
-  <div class="editor">
-    <canvas id="editor" width="3000px" height="2600px"></canvas>
+  <div id="editor" class="editor">
   </div>
 </div>

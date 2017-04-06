@@ -15,8 +15,12 @@ defmodule Dashboard.SampleData.Nodes do
         authentication_id: 0,
         default_body: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
 <Response>
-    <Say voice=\"woman\">Please leave a message after the tone.</Say>
-    <Record/>
+  <Dial action=\"https://office.codelation.com:9999/endpoint?uuid=tr2\" timeout=\"10\">
+    <Number>1-701-781-5511</Number>
+  </Dial>
+  <Dial action=\"https://office.codelation.com:9999/endpoint?uuid=tr2\" timeout=\"10\">
+    <Number>1-715-338-0283</Number>
+  </Dial>
 </Response>",
         default_status: 200,
         default_content_type: "text/xml",
@@ -43,20 +47,23 @@ defmodule Dashboard.SampleData.Nodes do
       	type: "Trigger",
       	name: "Twilio::Calls.recieve",
         authentication_id: 1,
-        default_body: "<twiml send-to-vm></twiml>",
+        default_body: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<Response>
+    <Hangup />
+</Response>",
         default_status: 200,
         method: :post,
-        timeout: 10000,
+        timeout: 100,
         expose: %{
           "recipient" => %{
-            "phone_number" => "{{ to.number }}",
-            "caller_id" => "{{ join([titleize(ToCity), abbreviate(ToState, :state) ], \",\") }}"
+            "phone_number" => "{{ To }}",
+            "caller_id" => "{{ titleize(ToCity) }}, {{ abbreviate(ToState, :state) }}"
             # truncated is a large function that searches for possible shortened version of the string
             # This might need some work to optimize it
           },
           "caller" => %{
-            "phone_number" => "{{ from.number }}",
-            "caller_id" => "{{ join([titleize(FromCity), abbreviate(FromState, :state) ], \",\") }}"
+            "phone_number" => "{{ From }}",
+            "caller_id" => "{{ titleize(FromCity) }}, {{ abbreviate(FromState, :state) }}"
           }
         },
         next: [] # Doesn't need to go to a new node, it will just respond with the default after the timeout.
@@ -113,6 +120,13 @@ defmodule Dashboard.SampleData.Nodes do
         name: "Log",
         message: "[LOG] Replied to a ping with a pong",
         next: []
+      },
+      6 => %{
+        id: 6,
+        page_id: 2,
+        type: "Action",
+        name: "Google::Calendar::Status",
+
       }
     }
   end

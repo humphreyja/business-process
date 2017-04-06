@@ -7,7 +7,13 @@ use Mix.Config
 
 # General application configuration
 config :blackboard,
-  ecto_repos: [Blackboard.Repo]
+  ecto_repos: [Blackboard.Repo],
+  authorization_server_sign_in: "http://localhost:4000/?client_key=blackboard",
+  authorization_server_sign_out: "http://localhost:4000/sign-out/?client_key=blackboard"
+
+config :jwt,
+  secret_base: "sso_standard_secret_1234567890",
+  client_secret: "blackboard_secret"
 
 # Configures the endpoint
 config :blackboard, Blackboard.Endpoint,
